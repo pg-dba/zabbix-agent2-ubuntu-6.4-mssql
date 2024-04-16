@@ -10,7 +10,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
-    echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc && \
+    chmod 777 /etc/odbc.ini && \
     apt-get -y install iputils-ping fping dnsutils telnet && \
     cd /usr/sbin; ln -s /usr/bin/fping && \
     chown root:zabbix /usr/bin/fping && \
@@ -29,8 +29,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get clean all && \
     unset DEBIAN_FRONTEND
 
+RUN echo '[mssql]' > /etc/odbc.ini && \
+    echo 'Driver = ODBC Driver 18 for SQL Server' >> /etc/odbc.ini && \
+    echo 'Server =  172.27.172.129' >> /etc/odbc.ini && \
+    echo 'Port = 1433' >> /etc/odbc.ini && \
+    echo 'TrustServerCertificate = yes' >> /etc/odbc.ini
+
 USER zabbix
 
 RUN echo 'alias nocomments="sed -e :a -re '"'"'s/<\!--.*?-->//g;/<\!--/N;//ba'"'"' | sed -e :a -re '"'"'s/\/\*.*?\*\///g;/\/\*/N;//ba'"'"' | grep -v -P '"'"'^\s*(#|;|--|//|$)'"'"'"' >> ~/.bashrc
+RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 
 WORKDIR /etc/zabbix
