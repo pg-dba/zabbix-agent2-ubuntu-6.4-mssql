@@ -3,13 +3,13 @@ FROM zabbix/zabbix-agent2:ubuntu-6.4.12
 
 USER root
 
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc && \
-    curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y msodbcsql18 && \
-    ACCEPT_EULA=Y apt-get install -y mssql-tools18 && \
+    apt-get -y install curl lsb-release gnupg2 && \
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && \
+    curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
     echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc && \
     apt-get -y install iputils-ping fping dnsutils telnet && \
     cd /usr/sbin; ln -s /usr/bin/fping && \
