@@ -31,15 +31,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 RUN echo '[mssql]' > /etc/odbc.ini && \
     echo 'Driver = ODBC Driver 18 for SQL Server' >> /etc/odbc.ini && \
-    echo 'Server =  172.27.172.129' >> /etc/odbc.ini && \
-    echo 'Port = 1433' >> /etc/odbc.ini && \
-    echo 'TrustServerCertificate = yes' >> /etc/odbc.ini
-
+    echo 'Server =  ${ODBC_SRV}' >> /etc/odbc.ini && \
+    echo 'Port = ${ODBC_PORT}' >> /etc/odbc.ini && \
+    echo 'TrustServerCertificate = yes' >> /etc/odbc.ini && \
+    chmod 600 /etc/odbc.ini && \
+    chown zabbix:zabbix /etc/odbc.ini
+    
 USER zabbix
 
 RUN echo 'alias nocomments="sed -e :a -re '"'"'s/<\!--.*?-->//g;/<\!--/N;//ba'"'"' | sed -e :a -re '"'"'s/\/\*.*?\*\///g;/\/\*/N;//ba'"'"' | grep -v -P '"'"'^\s*(#|;|--|//|$)'"'"'"' >> ~/.bashrc
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 
 WORKDIR /etc/zabbix
-
-ENTRYPOINT ["/etc/cron.d/docker-entrypoint.sh"]
