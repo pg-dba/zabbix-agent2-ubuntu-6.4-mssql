@@ -41,3 +41,5 @@ RUN echo 'alias nocomments="sed -e :a -re '"'"'s/<\!--.*?-->//g;/<\!--/N;//ba'"'
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 
 WORKDIR /etc/zabbix
+
+ENTRYPOINT ["/etc/cron.d/docker-entrypoint.sh"]
