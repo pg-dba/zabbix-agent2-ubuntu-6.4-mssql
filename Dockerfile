@@ -11,7 +11,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
     chmod 777 /etc/odbc.ini && \
-    apt-get -y install iputils-ping fping dnsutils telnet && \
+    apt-get -y install iputils-ping fping dnsutils telnet netcat && \
     cd /usr/sbin; ln -s /usr/bin/fping && \
     chown root:zabbix /usr/bin/fping && \
     chmod u+s /usr/bin/fping && \
@@ -38,7 +38,7 @@ USER zabbix
 RUN echo 'alias nocomments="sed -e :a -re '"'"'s/<\!--.*?-->//g;/<\!--/N;//ba'"'"' | sed -e :a -re '"'"'s/\/\*.*?\*\///g;/\/\*/N;//ba'"'"' | grep -v -P '"'"'^\s*(#|;|--|//|$)'"'"'"' >> ~/.bashrc
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 
-RUN echo 'echo "[mssql]" >> /etc/odbc.ini' >> ~/.bashrc && \
+RUN echo 'echo "[MSSQL]" >> /etc/odbc.ini' >> ~/.bashrc && \
     echo 'echo "Driver = ODBC Driver 18 for SQL Server" >> /etc/odbc.ini' >> ~/.bashrc && \
     echo 'echo "Server =  ${ODBC_SRV}" >> /etc/odbc.ini' >> ~/.bashrc && \
     echo 'echo "Port = ${ODBC_PORT}" >> /etc/odbc.ini' >> ~/.bashrc && \
